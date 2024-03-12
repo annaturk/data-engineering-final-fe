@@ -14,7 +14,7 @@ conn = psycopg2.connect(
 
 @st.cache_data
 def get_trips(connection):
-cursor = conn.cursor()
+    cursor = conn.cursor()
 
     sql = "SELECT * FROM taxi_trips;"
 
