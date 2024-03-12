@@ -5,16 +5,19 @@ import psycopg2
 from prophet import Prophet
 from prophet.plot import plot_plotly
 
-conn = psycopg2.connect(
-    dbname='chicago_business_intelligence',
-    user='postgres',
-    password='root',
-    host= '/cloudsql/macro-nuance-416801:us-central1:mypostgres',
-    port='5432'
-)
+def create_connection(): 
+    conn = psycopg2.connect(
+        dbname='chicago_business_intelligence',
+        user='postgres',
+        password='root',
+        host= '/cloudsql/macro-nuance-416801:us-central1:mypostgres',
+        port='5432'
+    )
+    return conn
 
 @st.cache_data
-def get_trips(connection):
+def get_trips():
+    conn = create_connection()
     cursor = conn.cursor()
 
     sql = "SELECT * FROM taxi_trips;"
@@ -23,7 +26,7 @@ def get_trips(connection):
     taxi_trips = cursor.fetchall()
 
     columns = [d[0] for d in cursor.description]
-    df = pd.DataFrame(taxi_trips, columns=columns)
+    trip_df = pd.DataFrame(taxi_trips, columns=columns)
 
     trip_df['trip_start_timestamp'] = pd.to_datetime(trip_df['trip_start_timestamp'], utc=True)
     trip_df['trip_end_timestamp'] = pd.to_datetime(trip_df['trip_end_timestamp'], utc=True)
@@ -37,8 +40,7 @@ def get_trips(connection):
     return trip_df
 
 def main():
-    st.title('Taxi Trip Forecast in Chicago')
-    
+    trip_df = get_trips()
     start_trip_count = trip_df.groupby(['pickup_zip_code'])['trip_id'].count().reset_index(name ='Total_Trips')
     st.bar_chart(start_trip_count)
 
@@ -48,7 +50,7 @@ def main():
     trip_count = pd.merge(start_trip_count, end_trip_count, left_on='pickup_zip_code', right_on='dropoff_zip_code', how='outer')
     trip_count.fillna(0, inplace=True)
     trip_count.drop(columns=['dropoff_zip_code'], inplace=True)
-    st.bar_chart(trip_count, x="pickup_zip_code", y=['Total_Trips', 'Total_Dropoff_Trips'], color="col3")
+    st.bar_chart(trip_count, x="pickup_zip_code", y=['Total_Trips', 'Total_Dropoff_Trips'])
 
     daily_df = trip_df.groupby(['trip_date',
                             'pickup_zip_code'])['trip_id'].count().reset_index(name ='Total_trips_per_month')
