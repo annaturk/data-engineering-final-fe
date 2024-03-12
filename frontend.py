@@ -5,8 +5,6 @@ import psycopg2
 from prophet import Prophet
 from prophet.plot import plot_plotly
 
-st.title('Airport Trips in Chicago')
-
 conn = psycopg2.connect(
     host='/cloudsql/macro-nuance-416801:us-central1:mypostgres',
     database='chicago_business_intelligence',
@@ -38,6 +36,8 @@ cursor = conn.cursor()
     return trip_df
 
 def main():
+    st.title('Taxi Trip Forecast in Chicago')
+    
     start_trip_count = trip_df.groupby(['pickup_zip_code'])['trip_id'].count().reset_index(name ='Total_Trips')
     st.bar_chart(start_trip_count)
 
