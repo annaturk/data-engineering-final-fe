@@ -6,7 +6,7 @@ steps:
     args: ['push', 'gcr.io/macro-nuance-416801/my-streamlit-app']
 
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['run', 'deploy', 'my-streamlit-app', '--image', 'gcr.io/macro-nuance-416801/my-streamlit-app', '--platform', 'managed', '--region', 'us-central1', '--allow-unauthenticated']
+    args: ['run', 'deploy', 'my-streamlit-app', '--image', 'gcr.io/macro-nuance-416801/my-streamlit-app', '--platform', 'managed', '--region', 'us-central1','--port','8501', '--allow-unauthenticated']
 
 images:
 - gcr.io/macro-nuance-416801/my-streamlit-app
