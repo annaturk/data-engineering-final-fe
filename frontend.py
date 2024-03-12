@@ -1,9 +1,12 @@
+import os
 import streamlit as st
 import pandas as pd
 import psycopg2
 
 from prophet import Prophet
 from prophet.plot import plot_plotly
+
+port = int(os.environ.get("PORT", 8501))
 
 conn = psycopg2.connect(
     host='/cloudsql/macro-nuance-416801:us-central1:mypostgres',
