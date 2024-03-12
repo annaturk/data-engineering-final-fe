@@ -9,7 +9,7 @@ conn = psycopg2.connect(
     dbname='chicago_business_intelligence',
     user='postgres',
     password='root',
-    host='localhost',
+    host= '/cloudsql/macro-nuance-416801:us-central1:mypostgres',
     port='5432'
 )
 
